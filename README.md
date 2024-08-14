@@ -71,3 +71,5 @@ in the world, so knowing how to build a chat app is an indisp
 - Expo: Development framework for React Native
 - React Navigation: Navigation library
 - Gifted Chat: React Native library specifically created for developing chat apps
+- Firebase: Google's platform to support data storage, auth, etc.
+- Firestore: Google's database storage
