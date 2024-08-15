@@ -73,3 +73,4 @@ in the world, so knowing how to build a chat app is an indisp
 - Gifted Chat: React Native library specifically created for developing chat apps
 - Firebase: Google's platform to support data storage, auth, etc.
 - Firestore: Google's database storage
+- React Native AsyncStorage: Allows for app usage when offline
