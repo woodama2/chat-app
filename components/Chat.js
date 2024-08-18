@@ -108,7 +108,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 
   // Renders custom actions for the chat
   const renderCustomActions = (props) => {
-    return <CustomActions storage={storage} {...props} />;
+    return <CustomActions storage={storage} userID={userID} {...props} />;
   };
 
   // Renders custom view for sending location messages

@@ -57,6 +57,12 @@ const CustomActions = ({
       const location = await Location.getCurrentPositionAsync({});
       if (location) {
         onSend({
+          _id: `${userID}-${new Date().getTime()}`,
+          createdAt: new Date(),
+          user: {
+            _id: userID,
+            name: 'User',
+          },
           location: {
             longitude: location.coords.longitude,
             latitude: location.coords.latitude,
@@ -75,7 +81,15 @@ const CustomActions = ({
     const blob = await response.blob();
     uploadBytes(newUploadRef, blob).then(async (snapshot) => {
       const imageURL = await getDownloadURL(snapshot.ref);
-      onSend({ image: imageURL });
+      onSend({
+        _id: uniqueRefString,
+        createdAt: new Date(),
+        user: {
+          _id: userID,
+          name: 'User',
+        },
+        image: imageURL,
+      });
     });
   };
 
