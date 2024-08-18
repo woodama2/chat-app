@@ -7,7 +7,12 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
 } from 'react-native';
-import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
+import {
+  Bubble,
+  GiftedChat,
+  InputToolbar,
+  renderActions,
+} from 'react-native-gifted-chat';
 import {
   collection,
   getDocs,
@@ -17,6 +22,8 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
 const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const { name, background, userID } = route.params;
@@ -24,14 +31,15 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 
   let unsubMessages;
 
-  // Effect hook to set navigation title
   useEffect(() => {
+    // Set username to the navigation title (once - when component is loaded)
     navigation.setOptions({ title: name });
     if (isConnected === true) {
       // Unregister current onSnapshot() listener to avoid registering multiple listeners when useEffect code is re-executed
       if (unsubMessages) unsubMessages();
       unsubMessages = null;
 
+      // Sets up an onSnapshot listener on a query targeting the messages collection in Firebase
       const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
 
       unsubMessages = onSnapshot(q, (documentsSnapshot) => {
@@ -54,6 +62,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     };
   }, [isConnected]);
 
+  // AsyncStorage is asynchronous, returns a promise, accepts only strings
   const cacheMessages = async (messagesToCache) => {
     try {
       await AsyncStorage.setItem('messages', JSON.stringify(messagesToCache));
@@ -68,36 +77,6 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     const cachedMessages = (await AsyncStorage.getItem('messages')) || [];
     setMessages(JSON.parse(cachedMessages));
   };
-
-  // // Effect hook for messages
-  // useEffect(() => {
-  //   if (isConnected === true){
-  //     if (unsubMessages) unsubMessages();
-  //     unsubMessages = null;
-
-  //   }
-  //   // Create a query to get the "messages" collection from the Firestore database
-  //   const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
-  //   // This function will be called whenever there are changes in the collection
-  //   unsubMessages = onSnapshot(q, (documentsSnapshot) => {
-  //     let newMessages = [];
-  //     // Iterate through each document in the snapshot
-  //     documentsSnapshot.forEach((doc) => {
-  //       newMessages.push({
-  //         id: doc.id,
-  //         ...doc.data(),
-  //         createdAt: new Date(doc.data().createdAt.toMillis()),
-  //       });
-  //       cacheMessages(newMessages);
-  //       setMessages(newMessages);
-  //     });
-  //   } else loadCachedMessages();
-
-  //   // Clean up code
-  //   return () => {
-  //     if (unsubMessages) unsubMessages();
-  //   };
-  // }, []);
 
   // Function to handle sending messages
   const onSend = (newMessages) => {
@@ -121,17 +100,46 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     );
   };
 
+  // Renders imput toolbar if the device is connected to the internet
   const renderInputToolbar = (props) => {
     if (isConnected) return <InputToolbar {...props} />;
     else return null;
   };
 
+  // Renders custom actions for the chat
+  const renderCustomActions = (props) => {
+    return <CustomActions storage={storage} {...props} />;
+  };
+
+  // Renders custom view for sending location messages
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
+  // Return chat screen with the selected color from the start screen
+  // Return GiftedChat component with messages and input
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
+        renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         onSend={(messages) => onSend(messages)}
         user={{ _id: userID, name: name }}
       />

@@ -19,6 +19,8 @@ const Start = ({ navigation }) => {
   const [background, setBackground] = useState('');
   const colors = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
 
+  // Sign in function that authenticates the user using Firebase Auth
+  // After Auth navigates to chat screen
   const signInUser = () => {
     signInAnonymously(auth)
       .then((result) => {

@@ -1,22 +1,28 @@
+import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+
+// Import React Native
 import { StyleSheet, Text, View, Alert } from 'react-native';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { LogBox } from 'react-native';
+LogBox.ignoreAllLogs();
+
 // Import the screens we want to navigate
 import Start from './components/Start';
 import Chat from './components/Chat';
+
+// Import screen navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+// Import Firebase
 import { initializeApp } from 'firebase/app';
 import {
   getFirestore,
   disableNetwork,
   enableNetwork,
 } from 'firebase/firestore';
-import { useNetInfo } from '@react-native-community/netinfo';
-import { useEffect, useState } from 'react';
 import { getStorage } from 'firebase/storage';
-
-import { LogBox } from 'react-native';
-LogBox.ignoreAllLogs();
 
 // Create the navigator
 const Stack = createNativeStackNavigator();
@@ -43,6 +49,7 @@ const App = () => {
   // Initialize Firebase Storage handler
   const storage = getStorage(app);
 
+  // Connection status monitoring.  If commection is lost, an error will appear saying "Connection lost!"
   useEffect(() => {
     if (connectionStatus.isConnected === false) {
       Alert.alert('Connection lost!');
@@ -53,11 +60,14 @@ const App = () => {
   }, [connectionStatus.isConnected]);
 
   return (
+    // Navigator Container to wrap all content and support site navigation
     <NavigationContainer>
+      {/* Default screen is Start */}
       <Stack.Navigator initialRouteName="Start">
         {/* Add the Screen components to the Navigator */}
         <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="Chat">
+          {/* Pass Firebase db object to chat screen */}
           {(props) => (
             <Chat
               isConnected={connectionStatus.isConnected}

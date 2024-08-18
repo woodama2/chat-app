@@ -1,3 +1,5 @@
+# meet app
+
 ### Objective
 
 To build a chat app for mobile devices using React Native. The app will provide users with a chat interface and options to share images and their location.
@@ -66,11 +68,66 @@ in the world, so knowing how to build a chat app is an indisp
 - Color options HEX codes: #090C08; #474056; #8A95A5; #B9C6AE
 - Start chatting button: font size 16, font weight 600, font color #FFFFFF, button color #757083
 
+## App Set Up
+
 ### Dependencies
 - React Native
+- React Native Maps: Ability to display a device's location
 - Expo: Development framework for React Native
+- Expo Location: Ability to access a device's location
+- Expo Image Picker: Allows for access to and usage of device's media library and camera
 - React Navigation: Navigation library
 - Gifted Chat: React Native library specifically created for developing chat apps
 - Firebase: Google's platform to support data storage, auth, etc.
-- Firestore: Google's database storage
+- Firebase - Firestore Database: Google's database storage for messages
+- Firebase - Auth: Google's Authentication tool
+- Firebase - Storage: Google's database storage for images/videos
 - React Native AsyncStorage: Allows for app usage when offline
+
+### Installation
+1. Clone the repository: 
+```
+git clone https://github.com/woodama2/chat-app
+```
+*or*
+1-b. Start from scratch
+```
+npx create-expo-app chat-app --template
+```
+
+2. Install Node.js, nvm, and npm to a suitable version
+```
+nvm install 16.19.0
+nvm use 16.19.0
+nvm alias default 16.19.0
+```
+
+3. Install expo-cli
+```
+npm install -g expo-cli
+```
+
+4. Install dependencies: (see list above for descriptions)
+
+
+5. Set up and configure Firebase: 
+- Create an account
+- Start a new project
+- Set up the database Build -> Firestore Database
+- Activate storage
+- Change rules from: "allow read, write: if false" to "allow read, write: if true"
+
+6. Add Firestore configuration to your project
+- Register your app
+- Add the environmental variables provided by Firestore to your App.js file
+
+6. Start the Expo development server: npx expo start
+
+### Testing
+Running on an Emulator
+1. Ensure you have an Android Emulator or iOS Simulator running
+2. Press "a" (for Android) or "i" (for iOS) in the Expo CLI Metro to launch the app within the emulator/simulator
+
+Running on a Physical Device
+1. Install and log into the Expo Go app from the Apple App or Google Play Stores
+2. Scan the QR code generated after running "npx expo start", which starts the metro in the Terminal
